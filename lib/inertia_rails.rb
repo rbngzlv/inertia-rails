@@ -8,8 +8,7 @@ ActionController::Renderers.add :inertia do |component, options|
     request,
     response,
     method(:render),
-    props: options[:props],
-    view_data: options[:view_data],
+    options,
   ).render
 end
 

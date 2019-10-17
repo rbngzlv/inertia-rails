@@ -4,23 +4,24 @@ module InertiaRails
   class Renderer
     attr_reader :component, :view_data
 
-    def initialize(component, controller, request, response, render_method, props:, view_data:)
+    def initialize(component, controller, request, response, render_method, options)
       @component = component
       @controller = controller
       @request = request
       @response = response
       @render_method = render_method
-      @props = props || {}
-      @view_data = view_data || {}
+      @props = options[:props] || {}
+      @view_data = options[:view_data] || {}
+      @status = options[:status] || 200
     end
 
     def render
       if @request.headers['X-Inertia']
         @response.set_header('Vary', 'Accept')
         @response.set_header('X-Inertia', 'true')
-        @render_method.call json: page, status: 200
+        @render_method.call json: page, status: @status
       else
-        @render_method.call template: 'inertia', layout: ::InertiaRails.layout, locals: (view_data).merge({page: page})
+        @render_method.call template: 'inertia', layout: ::InertiaRails.layout, locals: (view_data).merge({page: page}), status: @status
       end
     end
 
